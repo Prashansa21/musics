@@ -1,0 +1,579 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Sonix-style Music Player</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap">
+    <style>
+  body { background: linear-gradient(135deg, #23004615 0%, #4b006e8f 50%, #2d004d56 100%); }
+    .card{ transform: translateY(-6px); box-shadow: 0 10px 30px plum; }
+    .glass{ background: linear-gradient(180deg, rgba(255, 255, 255, 0.158), rgba(255, 255, 255, 0.541)); }
+    .accent { background: linear-gradient(90deg,#7c3aed,#8b5cf6); }
+    .icon-btn { display:inline-flex; align-items:center; justify-content:center; gap:.25rem; }
+    .progress::-webkit-slider-runnable-track { height:6px; background: plum; border-radius:6px; }
+    .progress::-webkit-slider-thumb { -webkit-appearance:none; width:14px; height:14px; margin-top:-4px; background:#9f7aea; border-radius:50%; }
+  </style>
+</head>
+<body class="bg-gray-900 text-gray-100 min-h-screen flex flex-col">
+  <!-- Top Navbar -->
+  <header class="w-full py-4 px-6 bg-gradient-to-r from-[#0f1724] via-[#0b1220] to-[#07080b] shadow-sm">
+    <div class="max-w-7xl mx-auto flex items-center justify-between">
+      <div class="flex items-center gap-4">
+        <div class="flex items-center gap-2">
+          <div class="w-10 h-10 rounded-full accent flex items-center justify-center text-white font-bold">♪</div>
+          <div>
+            <h1 class="text-xl font-bold">🎵 Sonix Player</h1>
+            <div class="text-xs text-gray-400 -mt-1">Your music, simplified</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="flex items-center gap-3">
+        <button id="loginBtn" class="px-4 py-2 rounded-full bg-gradient-to-r from-pink-500 to-violet-500 text-white">Login</button>
+        <a href="/signup.html"><button id="signupBtn" class="px-4 py-2 rounded-full border border-gray-700 text-gray-200">Sign Up</button></a>
+        
+        <button id="logoutBtn" class="px-4 py-2 rounded-full bg-red-600 text-white hidden">Logout</button>
+      </div>
+    </div>
+  </header>
+
+  <div class="flex-1 max-w-7xl mx-auto w-full flex gap-6 px-6 py-6">
+
+    <!-- Left Sidebar -->
+    <aside class="w-64 flex-shrink-0 glass rounded-lg p-4">
+      <div class="mb-4">
+        <input id="sidebarSearch" placeholder="Search songs..." class="w-full p-3 rounded bg-gray-800 text-gray-100 outline-none" />
+      </div>
+
+      <div class="mb-4">
+        <button id="homeBtn" class="w-full text-left p-3 rounded hover:bg-gray-800 flex items-center gap-3">
+          <svg class="w-5 h-5 text-purple-400" fill="currentColor" viewBox="0 0 20 20"><path d="M10 2L2 8v8a1 1 0 001 1h5v-6h4v6h5a1 1 0 001-1V8L10 2z"/></svg>
+          Home
+        </button>
+      </div>
+
+<div class="mb-4">
+        <div class="flex items-center justify-between mb-2">
+          <div class="text-sm text-gray-400">Create Playlist</div>
+          <button id="createPlaylistBtn" class="p-1 rounded-full bg-purple-600 w-7 h-7 flex items-center justify-center">+</button>
+        </div>
+        <div id="playlistsList" class="space-y-2 max-h-56 overflow-auto pr-2"></div>
+      </div>
+
+      
+      <div class="mt-6 text-xs text-gray-500" style="color: whitesmoke;" >
+        Tip: Double-click a song card to play. Use the + on card to add to playlist (creates playlist with that song).
+      </div>
+      
+      <div class="mb-4">
+        
+      </div>
+       <div class="mb-4">
+       <a href="/fav.html"> <button id="homeBtn" class="px-3 py-1 bg-purple-600 rounded-md" class="w-full text-left p-3 rounded hover:bg-purple-600 flex items-center gap-3">
+          🤍 favourite
+        </button></a>
+       
+      </div>
+      <div class="p-3 rounded-2xl bg-gradient-to-br from-indigo-700/50 to-purple-700/50 text-center player-shadow">
+        <h3 class="font-semibold mb-2">Now Trending</h3>
+        <p class="text-sm text-slate-200 mb-3">🔥 Latest hits & curated playlists</p>
+       <a href="/ex.html"><button class="px-3 py-1 bg-purple-600 rounded-md">Explore</button></a> 
+      </div>
+      
+      <div class="mb-4">
+        
+      </div>
+      <div class="glass rounded-2xl p-4 player-shadow">
+        <h3 class="font-semibold mb-2">Recommended</h3>
+        <ul class="space-y-2 text-sm text-slate-200">
+          <li>🎧 Chill Vibes</li>
+          <li>🎤 Top 50 Global</li>
+          <li>🎸 Acoustic Gems</li>
+        </ul>
+      </div>
+      
+      <div class="mb-4">
+        
+      </div>
+     <img src="https://i.scdn.co/image/ab6761610000e5eba899543f2443a853fedda368" alt="">
+     <img src="https://tse4.mm.bing.net/th/id/OIP.v1biQZIB94iG4O70DJKBYQHaEK?pid=Api&P=0&h=180" alt="">
+</aside>
+
+ 
+    <!-- Main Content -->
+    <main class="flex-1">
+      <section class="mb-6">
+        <div class="flex items-center justify-between mb-4">
+          <h2 class="text-2xl font-semibold">Popular</h2>
+          <div class="flex items-center gap-3">
+            <input id="topSearch" placeholder="Search title..." class="px-3 py-2 rounded bg-gray-800 outline-none" />
+            <button id="topSearchBtn" class="px-3 py-2 bg-purple-600 rounded">Search</button>
+            <button id="profileBtn" class="px-3 py-2 bg-gray-700 rounded hidden">Profile</button>
+            <button id="allSongsBtn" class="px-3 py-2 bg-gray-700 rounded hidden">All Songs</button>
+          </div>
+        </div>
+
+        <div id="cardsGrid" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-5"></div>
+      </section>
+
+      <!-- Profile / Playlists detail -->
+      <section id="profileArea" class="hidden">
+        <div class="mb-4 flex items-center justify-between">
+          <h3 class="text-xl font-semibold">My Profile</h3>
+          <button id="backToHome" class="px-3 py-2 bg-gray-700 rounded">Back to Home</button>
+        </div>
+        <div id="userPlaylists" class="space-y-4"></div>
+      </section>
+    </main>
+  </div>
+
+  <!-- Bottom Sticky Player -->
+  <div class="fixed left-6 right-6 bottom-6 bg-gradient-to-r from-[#0b1220] to-[#071025] rounded-xl p-3 flex items-center gap-4 shadow-2xl">
+    <img id="playerImg" src="" class="w-16 h-16 rounded object-cover bg-gray-800" />
+    <div class="flex-1">
+      <div class="flex items-center justify-between">
+        <div>
+          <div id="playerTitle" class="font-semibold">No song playing</div>
+          <div id="playerArtist" class="text-sm text-gray-400">-</div>
+        </div>
+        <div class="flex items-center gap-2">
+          <button id="prevBtnPlayer" class="icon-btn p-2 rounded-full hover:bg-gray-800"><svg class="w-5 h-5" viewBox="0 0 20 20" fill="currentColor"><path d="M11 5v4l5-4v10l-5-4v4l-7-5 7-5z"/></svg></button>
+          <button id="playPausePlayer" class="icon-btn p-2 rounded-full bg-purple-600 text-white"><svg id="playIcon" class="w-5 h-5" viewBox="0 0 20 20" fill="currentColor"><path d="M6 4l10 6-10 6V4z"/></svg></button>
+          <button id="nextBtnPlayer" class="icon-btn p-2 rounded-full hover:bg-gray-800"><svg class="w-5 h-5" viewBox="0 0 20 20" fill="currentColor"><path d="M4 4v12l7-6-7-6zM15 4h1v12h-1V4z"/></svg></button>
+        </div>
+      </div>
+      <div class="mt-3 flex items-center gap-3">
+        <input id="progress" type="range" min="0" max="100" value="0" class="progress w-full"/>
+        <div id="timeLabel" class="text-xs text-gray-400 w-24 text-right">0:00 / 0:00</div>
+      </div>
+    </div>
+    <audio id="audio" preload="metadata"></audio>
+  </div>
+
+  <!-- Login Modal -->
+  <div id="loginModal" class="fixed inset-0 bg-black bg-opacity-70 hidden items-center justify-center">
+    <div class="bg-gray-900 rounded-lg p-6 w-full max-w-md">
+      <h3 class="text-lg font-semibold mb-3">Login</h3>
+      <input id="email" placeholder="Email" class="w-full mb-3 p-3 rounded bg-gray-800" />
+      <input id="password" type="password" placeholder="Password" class="w-full mb-4 p-3 rounded bg-gray-800" />
+      <div class="flex justify-end gap-2">
+        <button id="cancelLogin" class="px-3 py-2 rounded bg-gray-700">Cancel</button>
+        <button id="doLogin" class="px-3 py-2 rounded bg-purple-600 text-white">Login</button>
+      </div>
+      <p id="loginMsg" class="text-sm text-red-400 mt-2"></p>
+    </div>
+  </div>
+
+  <!-- Create Playlist Modal -->
+  <div id="createModal" class="fixed inset-0 bg-black bg-opacity-70 hidden items-center justify-center">
+    <div class="bg-gray-900 rounded-lg p-6 w-full max-w-sm">
+      <h3 class="text-lg font-semibold mb-3">Create Playlist</h3>
+      <input id="newPlaylistName" placeholder="Playlist name" class="w-full mb-3 p-3 rounded bg-gray-800" />
+      <div class="flex justify-end gap-2">
+        <button id="cancelCreate" class="px-3 py-2 rounded bg-gray-700">Cancel</button>
+        <button id="doCreate" class="px-3 py-2 rounded bg-purple-600 text-white">Create</button>
+      </div>
+      <p id="createMsg" class="text-sm text-green-400 mt-2"></p>
+    </div>
+  </div>
+
+<script>
+/* ---------------------------
+  Configuration & helpers
+   --------------------------- */
+const API_BASE = 'https://sonix-s830.onrender.com/api';
+const ENDPOINTS = {
+  songs: `${API_BASE}/songs`,
+  songByTitle: title => `${API_BASE}/songs/title/${encodeURIComponent(title)}`,
+  login: (email, pass) => `${API_BASE}/users/login?email=${encodeURIComponent(email)}&password=${encodeURIComponent(pass)}`,
+  createPlaylist: `${API_BASE}/playlists`,
+  playlistsByUser: userId => `${API_BASE}/playlists/user/${userId}`,
+  deletePlaylist: (pid, uid) => `${API_BASE}/playlists/${pid}?userId=${encodeURIComponent(uid)}`,
+  deleteSongFromPlaylist: (pid, sid) => `${API_BASE}/playlists/${pid}/songs/${sid}`
+};
+
+const q = id => document.getElementById(id);
+const cardsGrid = q('cardsGrid');
+const audio = q('audio');
+const playerImg = q('playerImg');
+const playerTitle = q('playerTitle');
+const playerArtist = q('playerArtist');
+const playPausePlayer = q('playPausePlayer');
+const progress = q('progress');
+const timeLabel = q('timeLabel');
+const loginModal = q('loginModal');
+const createModal = q('createModal');
+
+let songs = [], currentIndex = -1;
+let likes = JSON.parse(localStorage.getItem('sonix_likes') || '[]');
+
+/* Safe audio URL picker */
+function getAudioUrl(s){
+  if(!s) return '';
+  return s.songUrl || s.audioUrl || s.url || s.previewUrl || s.song || s.file || '';
+}
+
+function timeFormat(sec){
+  if(isNaN(sec)) return '0:00';
+  sec = Math.floor(sec);
+  return Math.floor(sec/60) + ':' + String(sec%60).padStart(2,'0');
+}
+
+/* ---------------------------
+  UI: render song cards
+   --------------------------- */
+function renderSongs(list){
+  cardsGrid.innerHTML = '';
+  if(!list || list.length === 0){
+    cardsGrid.innerHTML = `<div class="text-gray-400">No songs found.</div>`;
+    return;
+  }
+  list.forEach((s, i) => {
+    const liked = likes.includes(s._id);
+    const card = document.createElement('div');
+    card.className = 'card bg-gray-800 p-3 rounded-lg relative overflow-hidden';
+    card.innerHTML = `
+      <div class="relative">
+        <img src="${s.previewImg||''}" alt="${(s.title||'')}" class="w-full h-44 object-cover rounded-md bg-gray-700" onerror="this.style.opacity=0.6" />
+        <button data-i="${i}" class="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-12 h-12 rounded-full bg-purple-600 text-white flex items-center justify-center opacity-0 hover:opacity-100 transition-opacity play-overlay">
+          <svg class="w-6 h-6" viewBox="0 0 20 20" fill="currentColor"><path d="M6 4l10 6-10 6V4z"/></svg>
+        </button>
+      </div>
+      <div class="mt-3">
+        <div class="font-semibold">${escapeHtml(s.title||s.name||'Untitled')}</div>
+        <div class="text-sm text-gray-400">${escapeHtml(s.artist||s.singer||'')}</div>
+      </div>
+      <div class="mt-3 flex items-center justify-between">
+        <button class="play bg-purple-600 px-2 py-1 rounded">Play</button>
+        <div class="flex items-center gap-2">
+          <button class="like-btn icon-btn p-2 rounded ${liked? 'text-pink-400':''}" data-id="${s._id}" title="Like">❤</button>
+          <button class="add-btn icon-btn p-2 rounded bg-gray-700" data-id="${s._id}" title="Add to playlist">+</button>
+        </div>
+        <div class="text-xs text-gray-400">${s.genre ? escapeHtml(s.genre) : ''}</div>
+      </div>
+    `;
+    // play overlay
+    card.querySelector('.play-overlay').addEventListener('click', (ev) => {
+      ev.stopPropagation();
+      playSongAtIndex(i);
+    });
+    // double click anywhere on card to play
+    card.addEventListener('dblclick', ()=>playSongAtIndex(i));
+
+    // like
+    card.querySelector('.like-btn').addEventListener('click', (e)=>{
+      e.stopPropagation();
+      const id = e.currentTarget.dataset.id;
+      if(likes.includes(id)) likes = likes.filter(x=>x!==id); else likes.push(id);
+      localStorage.setItem('sonix_likes', JSON.stringify(likes));
+      renderSongs(list);
+    });
+
+    // add to playlist -> opens createPlaylist modal with songId prefilled
+    card.querySelector('.add-btn').addEventListener('click', (e)=>{
+      e.stopPropagation();
+      const id = e.currentTarget.dataset.id;
+      q('newPlaylistName').value = '';
+      q('createMsg').textContent = '';
+      createModal.dataset.addSongId = id;
+      createModal.classList.remove('hidden'); createModal.classList.add('flex'); 
+    });
+
+    cardsGrid.appendChild(card);
+  });
+}
+
+/* simple html escape */
+function escapeHtml(str){ if(!str) return ''; return String(str).replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c])); }
+
+/* ---------------------------
+  Audio & player controls
+   --------------------------- */
+function playSongAtIndex(i){
+  if(!songs[i]) return alert('Song object not available (check console).');
+  currentIndex = i;
+  const s = songs[i];
+  const url = getAudioUrl(s);
+  if(!url){ console.log('Song object:', s); return alert('No playable URL found for this song. See console for object.'); }
+  audio.src = url;
+  audio.play().catch(err=>console.error(err));
+  playerImg.src = s.previewImg || '';
+  playerTitle.textContent = s.title || s.name || 'Untitled';
+  playerArtist.textContent = s.artist || s.singer || '';
+  playPausePlayer.classList.add('bg-purple-600');
+  playPausePlayer.innerHTML = `<svg class="w-5 h-5" viewBox="0 0 20 20" fill="currentColor"><path d="M6 4l10 6-10 6V4z"/></svg>`;
+}
+
+
+/* play/pause toggle */
+playPausePlayer.addEventListener('click', ()=>{
+  if(audio.paused){
+    audio.play();
+  } else {
+    audio.pause();
+  }
+});
+audio.addEventListener('play', ()=>{ playPausePlayer.classList.add('bg-purple-600'); });
+audio.addEventListener('pause', ()=>{ playPausePlayer.classList.remove('bg-purple-600'); });
+
+q('nextBtnPlayer').addEventListener('click', ()=> {
+  if(songs.length === 0) return;
+  currentIndex = (currentIndex + 1) % songs.length;
+  playSongAtIndex(currentIndex);
+});
+q('prevBtnPlayer').addEventListener('click', ()=> {
+  if(songs.length === 0) return;
+  currentIndex = (currentIndex - 1 + songs.length) % songs.length;
+  playSongAtIndex(currentIndex);
+});
+
+/* progress */
+audio.addEventListener('timeupdate', ()=>{
+  if(isFinite(audio.duration) && audio.duration>0){
+    const pct = (audio.currentTime / audio.duration) * 100;
+    progress.value = pct;
+    timeLabel.textContent = `${timeFormat(audio.currentTime)} / ${timeFormat(audio.duration)}`;
+  } else {
+    progress.value = 0;
+    timeLabel.textContent = `0:00 / 0:00`;
+  }
+});
+progress.addEventListener('input', ()=> {
+  if(isFinite(audio.duration)) audio.currentTime = (progress.value/100)*audio.duration;
+});
+audio.addEventListener('ended', ()=> {
+  // auto next
+  q('nextBtnPlayer').click();
+});
+
+/* ---------------------------
+  API: fetch songs / search
+   --------------------------- */
+async function loadAllSongs(){
+  try {
+    const res = await fetch(ENDPOINTS.songs);
+    if(!res.ok) throw new Error('Failed to fetch songs');
+    const data = await res.json();
+    // try common response shapes
+    songs = Array.isArray(data) ? data : (Array.isArray(data.data) ? data.data : (data.songs||data.result||[]));
+    renderSongs(songs);
+  } catch (err) {
+    console.error(err);
+    cardsGrid.innerHTML = `<div class="text-red-400">Unable to load songs. See console for details.</div>`;
+  }
+}
+
+async function searchByTitle(qstr){
+  try {
+    const res = await fetch(ENDPOINTS.songByTitle(qstr));
+    if(!res.ok) throw new Error('Search failed');
+    const d = await res.json();
+    songs = Array.isArray(d) ? d : (d ? [d] : []);
+    renderSongs(songs);
+  } catch (err) {
+    console.error(err);
+    alert('Search error — see console');
+  }
+}
+
+/* ---------------------------
+  Playlist: create / list / delete / remove song
+   --------------------------- */
+async function createPlaylistApi(name, userId, songId){
+  try {
+    const body = { name, userId, songs: songId ? [songId] : [] };
+    const res = await fetch(ENDPOINTS.createPlaylist, {
+      method: 'POST',
+      headers: {'Content-Type':'application/json'},
+      body: JSON.stringify(body)
+    });
+    if(!res.ok) throw new Error('Create playlist failed');
+    return await res.json();
+  } catch (err) { console.error(err); throw err; }
+}
+
+async function fetchUserPlaylists(){
+  if(!localStorage.getItem('sonix_userId')) return alert('Login first to view your playlists');
+  try {
+    const uid = localStorage.getItem('sonix_userId');
+    const res = await fetch(ENDPOINTS.playlistsByUser(uid));
+    if(!res.ok) throw new Error('Failed to load playlists');
+    const data = await res.json();
+    return Array.isArray(data) ? data : (data.playlists || data.data || []);
+  } catch (err) { console.error(err); throw err; }
+}
+
+async function deletePlaylistApi(pid){
+  try {
+    const uid = localStorage.getItem('sonix_userId');
+    const res = await fetch(ENDPOINTS.deletePlaylist(pid, uid), { method: 'DELETE' });
+    if(!res.ok) throw new Error('Delete playlist failed');
+    return await res.json();
+  } catch (err) { console.error(err); throw err; }
+}
+
+async function deleteSongFromPlaylistApi(pid, sid){
+  try {
+    const res = await fetch(ENDPOINTS.deleteSongFromPlaylist(pid, sid), { method: 'DELETE' });
+    if(!res.ok) throw new Error('Delete song failed');
+    return await res.json();
+  } catch (err) { console.error(err); throw err; }
+}
+
+/* ---------------------------
+  Wiring UI controls
+   --------------------------- */
+q('topSearchBtn').addEventListener('click', ()=> {
+  const val = q('topSearch').value.trim();
+  if(!val) return loadAllSongs();
+  searchByTitle(val);
+});
+q('sidebarSearch').addEventListener('keypress', (e)=> { if(e.key==='Enter') q('topSearchBtn').click(); });
+q('topSearch').addEventListener('keypress', (e)=> { if(e.key==='Enter') q('topSearchBtn').click(); });
+
+q('createPlaylistBtn').addEventListener('click', ()=> {
+  createModal.dataset.addSongId = '';
+  q('newPlaylistName').value = ''; q('createMsg').textContent = '';
+  createModal.classList.remove('hidden'); createModal.classList.add('flex');
+});
+
+q('cancelCreate').addEventListener('click', ()=> { createModal.classList.add('hidden'); });
+q('doCreate').addEventListener('click', async ()=> {
+  const name = q('newPlaylistName').value.trim();
+  if(!name) return q('createMsg').textContent = 'Enter a name';
+  const userId = localStorage.getItem('sonix_userId');
+  if(!userId) return alert('Please login first');
+  const songId = createModal.dataset.addSongId || null;
+  try {
+    await createPlaylistApi(name, userId, songId);
+    q('createMsg').textContent = 'Playlist created!';
+    createModal.classList.add('hidden');
+    await refreshPlaylistsInSidebar();
+  } catch (err){ q('createMsg').textContent = 'Error creating playlist'; }
+});
+
+/* login flow */
+q('loginBtn').addEventListener('click', ()=> { loginModal.classList.remove('hidden'); loginModal.classList.add('flex'); });
+q('cancelLogin').addEventListener('click', ()=> { loginModal.classList.add('hidden'); });
+q('doLogin').addEventListener('click', async ()=> {
+  const e = q('email').value.trim(), p = q('password').value.trim();
+  if(!e||!p) return q('loginMsg').textContent = 'Enter credentials';
+  try {
+    const res = await fetch(ENDPOINTS.login(e,p));
+    if(!res.ok) throw new Error('Login failed');
+    const data = await res.json();
+    const uid = data._id || data.id || data.userId || (data.user && (data.user._id||data.user.id));
+    if(uid){
+      localStorage.setItem('sonix_userId', uid);
+      loginModal.classList.add('hidden');
+      q('loginMsg').textContent = '';
+      q('loginBtn').classList.add('hidden'); q('logoutBtn').classList.remove('hidden'); q('profileBtn').classList.remove('hidden'); q('allSongsBtn').classList.remove('hidden');
+      await refreshPlaylistsInSidebar();
+      alert('Logged in!');
+    } else {
+      q('loginMsg').textContent = 'Login returned no user id (check console)';
+      console.log('Login response:', data);
+    }
+  } catch (err) {
+    console.error(err); q('loginMsg').textContent = 'Login error (console)';
+  }
+});
+q('logoutBtn').addEventListener('click', ()=> { localStorage.removeItem('sonix_userId'); location.reload(); });
+
+/* profile button - show playlists */
+q('profileBtn').addEventListener('click', async ()=> {
+  try {
+    const pls = await fetchUserPlaylists();
+    q('profileArea').classList.remove('hidden'); q('cardsGrid').parentElement.parentElement.querySelector('section').classList.add('hidden');
+    renderProfile(playlistsToNormalized(pls));
+  } catch (err) {
+    alert('Unable to load playlists (console)');
+  }
+});
+q('backToHome').addEventListener('click', ()=> {
+  q('profileArea').classList.add('hidden'); q('cardsGrid').parentElement.parentElement.querySelector('section').classList.remove('hidden');
+});
+
+/* helper to fill sidebar playlists */
+async function refreshPlaylistsInSidebar(){
+  const container = q('playlistsList');
+  container.innerHTML = '';
+  if(!localStorage.getItem('sonix_userId')) return;
+  try {
+    const pls = await fetchUserPlaylists();
+    (pls || []).forEach(p => {
+      const div = document.createElement('div');
+      div.className = 'p-2 rounded hover:bg-gray-800 flex items-center justify-between';
+      div.innerHTML = `<div class="text-sm">${escapeHtml(p.name)}</div><div class="flex gap-2">
+        <button class="view-pl text-xs px-2 py-1 bg-gray-700 rounded" data-id="${p._id}">View</button>
+        <button class="del-pl text-xs px-2 py-1 bg-red-600 rounded" data-id="${p._id}">Del</button>
+      </div>`;
+      div.querySelector('.view-pl').addEventListener('click', ()=> { showPlaylistDetail(p); });
+      div.querySelector('.del-pl').addEventListener('click', async ()=> {
+        if(confirm('Delete playlist?')) {
+          await deletePlaylistApi(p._id);
+          await refreshPlaylistsInSidebar();
+          alert('Deleted');
+        }
+      });
+      container.appendChild(div);
+    });
+  } catch (err) { console.error(err); }
+}
+
+/* render profile playlists area */
+function playlistsToNormalized(raw){
+  // some APIs return songs as IDs vs objects; normalize minimally
+  return (raw || []).map(p => ({
+    _id: p._id || p.id,
+    name: p.name,
+    songs: Array.isArray(p.songs) ? p.songs.map(s => (typeof s === 'string' ? {_id:s, title:'Song'} : s)) : []
+  }));
+}
+function renderProfile(pls){
+  const out = q('userPlaylists'); out.innerHTML = '';
+  if(!pls.length) { out.innerHTML = '<div class="text-gray-400">No playlists</div>'; return; }
+  pls.forEach(p=>{
+    const box = document.createElement('div');
+    box.className = 'bg-gray-800 p-3 rounded';
+    box.innerHTML = `<div class="flex items-center justify-between"><div class="font-semibold">${escapeHtml(p.name)}</div>
+      <div><button class="delp px-2 py-1 bg-red-600 rounded">Delete</button></div></div>
+      <div class="mt-3 space-y-2">${p.songs.map(s=>`<div class="flex items-center justify-between"><div>${escapeHtml(s.title||s.name||'Untitled')}</div><button class="rm text-xs px-2 py-1 bg-gray-700 rounded" data-pid="${p._id}" data-sid="${s._id}">Remove</button></div>`).join('')}</div>`;
+    box.querySelector('.delp').addEventListener('click', async ()=>{
+      if(confirm('Delete playlist?')){ await deletePlaylistApi(p._id); alert('Deleted'); }
+      await refreshPlaylistsInSidebar();
+    });
+    box.querySelectorAll('.rm').forEach(b=>{
+      b.addEventListener('click', async ()=>{
+        const pid = b.dataset.pid, sid = b.dataset.sid;
+        if(confirm('Remove this song from playlist?')) { await deleteSongFromPlaylistApi(pid,sid); alert('Removed'); await refreshPlaylistsInSidebar(); }
+      });
+    });
+    out.appendChild(box);
+  });
+}
+
+/* show playlist detail and play songs from it */
+function showPlaylistDetail(p){
+  // p may have songs as objects
+  const normalized = playlistsToNormalized([p])[0];
+  q('profileArea').classList.remove('hidden'); q('cardsGrid').parentElement.parentElement.querySelector('section').classList.add('hidden');
+  renderProfile([normalized]);
+}
+
+/* ---------------------------
+  Init: load songs and sidebar
+   --------------------------- */
+(async function init(){
+  await loadAllSongs();
+  if(localStorage.getItem('sonix_userId')) {
+    q('loginBtn').classList.add('hidden'); q('logoutBtn').classList.remove('hidden'); q('profileBtn').classList.remove('hidden'); q('allSongsBtn').classList.remove('hidden');
+    await refreshPlaylistsInSidebar();
+  }
+})();
+
+</script>
+</body>
+</html>
